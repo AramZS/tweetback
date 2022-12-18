@@ -1,5 +1,5 @@
 const Sentiment = require("sentiment");
-const parseDomain = require("parse-domain");
+const { parseDomain } = require("parse-domain");
 const dataSource = require("./DataSource");
 const metadata = require("../_data/metadata.js");
 const eleventyImg = require("@11ty/eleventy-img");
@@ -83,12 +83,20 @@ class Twitter {
 		if (tweet.entities && tweet.entities.urls) {
 			for (let url of tweet.entities.urls) {
 				try {
-					let urlObj = new URL(url.expanded_url);
+					let urlObj = new URL(url.expanded_url ?? url.url);
 					let parsedDomain = parseDomain(urlObj.host);
+					let domain;
+					if (parsedDomain.topLevelDomains) {
+						const tld = parsedDomain.topLevelDomains.join(".");
+						domain = `${parsedDomain.domain}.${tld}`;
+					} else {
+						domain = urlObj.host;
+					}
 					links.push({
 						host: urlObj.host,
 						origin: urlObj.origin,
-						domain: `${parsedDomain.domain}.${parsedDomain.tld}`,
+						// domain: `${parsedDomain.domain}.${parsedDomain.tld}`,
+						domain: domain,
 					});
 				} catch (e) {
 					console.log(e);
@@ -127,9 +135,10 @@ class Twitter {
 	// }
 
 	getUrlObject(url) {
-		let displayUrl = url.expanded_url;
+		let expandedUrl = url.expanded_url ?? url.url;
+		let displayUrl = expandedUrl;
 		let className = "tweet-url";
-		let targetUrl = url.expanded_url;
+		let targetUrl = expandedUrl;
 
 		// Links to my tweets
 		if (
@@ -257,6 +266,17 @@ class Twitter {
 					targetUrl = twitterLink(targetUrl);
 					let displayUrlHtml = `<a href="${targetUrl}" class="${className}">${displayUrl}</a>`;
 					text = text.replace(url.url, displayUrlHtml);
+
+					if (
+						targetUrl.startsWith("https://") &&
+						!targetUrl.startsWith("https://twitter.com/")
+					) {
+						medias.push(
+							`<a href="${targetUrl}"><img src="https://v1.opengraph.11ty.dev/${encodeURIComponent(
+								targetUrl
+							)}/small/" alt="OpenGraph image for ${displayUrl}" loading="lazy" decoding="async" width="375" height="197" class="tweet-media tweet-media-og"></a>`
+						);
+					}
 				}
 			}
 
@@ -273,7 +293,35 @@ class Twitter {
 
 		if (tweet.extended_entities) {
 			for (let media of tweet.extended_entities.media) {
-				if (media.type === "animated_gif" || media.type === "video") {
+				if (media.type === "photo") {
+					// remove photo URL
+					text = text.replace(media.url, "");
+
+					let imgHtml = "";
+					// TODO the await use here on eleventyImg could be improved
+					try {
+						let stats = await eleventyImg(
+							media.media_url_https,
+							ELEVENTY_IMG_OPTIONS
+						);
+						let imgRef = stats.jpeg[0];
+						imgHtml = `<img src="${imgRef.url}" width="${
+							imgRef.width
+						}" height="${imgRef.height}" alt="${
+							media.alt_text ||
+							"oh my god twitter doesn’t include alt text from images in their API"
+						}" class="tweet-media" onerror="fallbackMedia(this)" loading="lazy" decoding="async">`;
+						medias.push(`<a href="${imgRef.url}">${imgHtml}</a>`);
+					} catch (e) {
+						console.log("Image request error", e.message);
+						medias.push(
+							`<a href="${media.media_url_https}">${media.media_url_https}</a>`
+						);
+					}
+				} else if (
+					media.type === "animated_gif" ||
+					media.type === "video"
+				) {
 					if (media.video_info && media.video_info.variants) {
 						text = text.replace(media.url, "");
 
@@ -302,8 +350,6 @@ class Twitter {
 				}
 			}
 		}
-		const { mediaHtml } = await pullTwitterMedia(tweet);
-		medias.push(...mediaHtml);
 		if (medias.length) {
 			text += `<div class="tweet-medias">${medias.join("")}</div>`;
 		}
@@ -527,7 +573,7 @@ class Twitter {
 		return `<ol class="tweets tweets-thread">
 			${previousHtml ? `<ol class="tweets-replies">${previousHtml}</ol>` : ""}
 			${await this.renderTweet(tweet, tweetOptions)}
-			${nextHtml ? `<ol class="tweets-replies">${nextHtml}</ol>` : ""}
+			${nextHtml ? `<ol class="tweets-replies h-feed hfeed">${nextHtml}</ol>` : ""}
 		</ol>`;
 	}
 

@@ -59,23 +59,23 @@ module.exports = async function (data) {
 		}</li>
 		</ul>`;
 	}
-
-	const title = `${data.metadata.username}’s Twitter Archive${titleTweetNumberStr}`;
+	const descriptionText =
+		meta_description ||
+		`A read-only indieweb self-hosted archive of${
+			data.pagination &&
+			data.pagination.hrefs &&
+			data.pagination.hrefs.length
+				? ` all ${data.pagination.hrefs.length}`
+				: ""
+		} of ${data.metadata.username}’s tweets.`;
 
 	return `<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>${title}</title>
-		<meta name="description" content="A read-only indieweb self-hosted archive of${
-			data.pagination &&
-			data.pagination.hrefs &&
-			data.pagination.hrefs.length
-				? ` all ${data.pagination.hrefs.length}`
-				: ""
-		} of ${data.metadata.username}’s tweets." />
-		${meta(data, title)}
+		<title>${data.metadata.username}’s Twitter Archive${titleTweetNumberStr}</title>
+		<meta name="description" content="${descriptionText}" />
 		<script>
 		if("classList" in document.documentElement) {
 			document.documentElement.classList.add("has-js");
