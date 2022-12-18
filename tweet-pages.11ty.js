@@ -8,18 +8,22 @@ class TweetToFile extends Twitter {
 			pagination: {
 				data: "tweets",
 				size: 1,
-				before: (paginationData) => paginationData.sort((a, b) => b.date - a.date),
-				alias: "tweet"
+				before: (paginationData) =>
+					paginationData.sort((a, b) => b.date - a.date),
+				alias: "tweet",
 			},
 			layout: "layout.11ty.js",
 			// permalink: false,
-			permalink: data => `/${data.tweet.id_str}/`,
-			hideHeaderTweetsLink: true
+			permalink: (data) => `/${data.tweet.id_str}/`,
+			hideHeaderTweetsLink: true,
 		};
 	}
 
 	async render(data) {
-		return await this.renderTweetThread(data.tweet, { hidePermalink: true, showPopularity: true });
+		return await this.renderTweetThread(data.tweet, {
+			hidePermalink: true,
+			showPopularity: true,
+		});
 	}
 }
 
