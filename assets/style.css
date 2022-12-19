@@ -8,7 +8,7 @@ body {
 	min-height: 100%;
 	font-family: system-ui, sans-serif;
 	margin: 0;
-	padding: .5em .5em ;
+	padding: 0.5em 0.5em;
 }
 footer {
 	font-size: 0.875em; /* 14px /16 */
@@ -19,7 +19,7 @@ footer {
 }
 :link,
 :visited {
-	color: #1C4A1D;
+	color: #1c4a1d;
 	text-decoration-color: #17bf63;
 }
 .sr-only {
@@ -48,32 +48,42 @@ button {
 	border-radius: 0.2em; /* 4px /20 */
 }
 
+button:disabled,
+button[disabled] {
+	background-color: #333;
+}
+
 /* Flex lib */
 .lo {
-  /* The custom properties should not inherit from parent layouts */
-  --lo-stackpoint: initial;
-  --lo-margin-h: 0;
-  --lo-margin-v: 0;
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-  margin-top: calc(-1 * var(--lo-margin-v, 0));
-  margin-left: calc(-1 * var(--lo-margin-h, 0));
+	/* The custom properties should not inherit from parent layouts */
+	--lo-stackpoint: initial;
+	--lo-margin-h: 0;
+	--lo-margin-v: 0;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	margin-top: calc(-1 * var(--lo-margin-v, 0));
+	margin-left: calc(-1 * var(--lo-margin-h, 0));
 }
 .lo-c {
-  /* if a margin is in play, account for this in our stackpoint calculations */
-  /* notably this will also work if a stackpoint is not used. */
-  --lo-margin-mod: calc( var(--lo-stackpoint, -1 * var(--lo-margin-h, 0px)) - var(--lo-stackpoint, 0px) + var(--lo-margin-h, 0px) );
-  --lo-stackpoint-calc: calc( ( var(--lo-stackpoint, 100%) - 100% + var(--lo-margin-mod, 0px) ) * 999);
+	/* if a margin is in play, account for this in our stackpoint calculations */
+	/* notably this will also work if a stackpoint is not used. */
+	--lo-margin-mod: calc(
+		var(--lo-stackpoint, -1 * var(--lo-margin-h, 0px)) -
+			var(--lo-stackpoint, 0px) + var(--lo-margin-h, 0px)
+	);
+	--lo-stackpoint-calc: calc(
+		(var(--lo-stackpoint, 100%) - 100% + var(--lo-margin-mod, 0px)) * 999
+	);
 
-  flex-grow: 1;
-  flex-basis: var(--lo-basis, var(--lo-stackpoint-calc, auto));
-  margin: 0;
-  margin-top: var(--lo-margin-v, 0);
-  margin-left: var(--lo-margin-h, 0);
+	flex-grow: 1;
+	flex-basis: var(--lo-basis, var(--lo-stackpoint-calc, auto));
+	margin: 0;
+	margin-top: var(--lo-margin-v, 0);
+	margin-left: var(--lo-margin-h, 0);
 }
 .lo-inline > .lo-c {
-  flex-grow: 0;
+	flex-grow: 0;
 }
 
 .lo-cols {
@@ -102,7 +112,8 @@ button {
 .tweets-nav li {
 	display: inline-block;
 }
-@media (min-width: 48em) { /* 768px */
+@media (min-width: 48em) {
+	/* 768px */
 	.tweets-nav {
 		float: right;
 	}
@@ -127,8 +138,8 @@ button {
 }
 .tweets .tweets-replies {
 	padding-left: 1em;
-	border-left: 2px solid rgba(0,0,0,0.1);
-	margin-left: -.75em;
+	border-left: 2px solid rgba(0, 0, 0, 0.1);
+	margin-left: -0.75em;
 }
 .tweets .tweets-replies:empty {
 	display: none;
@@ -146,7 +157,7 @@ button {
 
 /* Individual tweet */
 .is_retweet .tweet-text {
-	opacity: .6;
+	opacity: 0.6;
 	font-style: italic;
 }
 .tweet-text {
@@ -173,7 +184,7 @@ button {
 	display: block;
 	font-style: italic;
 	font-size: 1rem; /* 16px /16 */
-	padding: 0 0 .4em;
+	padding: 0 0 0.4em;
 }
 .tweet-pretext,
 .tweet-pretext:visited {
@@ -181,7 +192,7 @@ button {
 }
 .tweet-metadata {
 	display: block;
-	margin-top: .5em;
+	margin-top: 0.5em;
 }
 .tweet-metadata,
 .tweet-metadata :link,
@@ -208,7 +219,7 @@ button {
 .tweet-next .tag-retweet,
 .tweet-previous .tag-favorite,
 .tweet-previous .tag-retweet {
-	opacity: .5;
+	opacity: 0.5;
 }
 
 /* Avatar */
@@ -228,7 +239,7 @@ h1 .tweet-avatar {
 	display: flex;
 	margin: 1em 0 0;
 	max-height: 10em;
-	gap: .5em;
+	gap: 0.5em;
 }
 .tweet-medias > a {
 	display: block;
@@ -236,7 +247,7 @@ h1 .tweet-avatar {
 	flex-grow: 0.5;
 }
 .tweet-media {
-	border-radius: .25em;
+	border-radius: 0.25em;
 	box-shadow: 0 0px 18px 3px rgb(0 0 0 / 40%);
 }
 img.tweet-media {
@@ -252,8 +263,8 @@ video.tweet-media {
 .tweet-media-load-error {
 	display: block;
 	border-top: 1px dashed;
-	margin: .5em 0;
-	padding-top: .5em;
+	margin: 0.5em 0;
+	padding-top: 0.5em;
 	color: #777;
 }
 a[href]:focus .tweet-media-load-error,
@@ -273,7 +284,7 @@ a[href]:hover .tweet-media-load-error {
 }
 .tweet-previous .tweet-media,
 .tweet-next .tweet-media {
-	opacity: .7;
+	opacity: 0.7;
 	max-height: 6em;
 	max-width: 12em;
 }
@@ -320,7 +331,7 @@ img.tweet-media-og {
 	border: none;
 	padding: 0;
 	margin-bottom: 0;
-	border-radius: .6em;
+	border-radius: 0.6em;
 	overflow: hidden;
 }
 .tag-naked {
@@ -364,4 +375,11 @@ img.tweet-media-og {
 	margin: 0 auto;
 	max-width: 40rem; /* 640px /16 */
 	font-size: 1.25em; /* 20px /16 */
+}
+
+#searchbox li {
+	border-top: 1px grey solid;
+	border-bottom: 1px grey solid;
+	margin-bottom: 12px;
+	padding: 8px;
 }

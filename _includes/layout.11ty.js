@@ -1,8 +1,10 @@
 const dataSource = require("../src/DataSource");
 const metadata = require("../_data/metadata.js");
 const meta = require("./partials/meta.11ty");
+const twitter = require("../src/twitter");
 
 module.exports = async function (data) {
+	const twitterTools = new twitter();
 	let titleTweetNumberStr = "";
 	if (data.page.fileSlug === "tweet-pages") {
 		titleTweetNumberStr = `—№ ${this.renderNumber(
@@ -13,6 +15,21 @@ module.exports = async function (data) {
 			(await dataSource.getAllTweets()).length
 		)}`;
 	}
+
+	let getHashTagsFromText = function (text = "") {
+		let words = {};
+		let splits = text.split(/(\#[A-Za-z][^\s\.\'\"\!\,\?\;\}\{]*)/g);
+		for (let split of splits) {
+			if (split.startsWith("#")) {
+				let tag = split.substr(1).toLowerCase();
+				if (!words[tag]) {
+					words[tag] = 0;
+				}
+				words[tag]++;
+			}
+		}
+		return words;
+	};
 
 	let navHtml = "";
 	if (
@@ -64,6 +81,8 @@ module.exports = async function (data) {
 			? ` all ${data.pagination.hrefs.length} of`
 			: ""
 	} ${data.metadata.username}’s tweets.`;
+	let tags = {};
+	let imgUrlArgument = false;
 	if (
 		data.page.fileSlug === "tweet-pages" &&
 		data.tweet &&
@@ -71,6 +90,10 @@ module.exports = async function (data) {
 	) {
 		// note that data.tweet.full_text is already HTML-escaped
 		meta_description = data.tweet.full_text.replace(/\s+/g, " ");
+
+		// const { imgUrls } = await twitterTools.pullTwitterMedia(data.tweet);
+		// imgUrlArgument = imgUrls;
+		tags = getHashTagsFromText(data.tweet.full_text);
 	}
 	return `<!doctype html>
 <html lang="en">
@@ -78,7 +101,13 @@ module.exports = async function (data) {
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>${data.metadata.username}’s Twitter Archive${titleTweetNumberStr}</title>
-		<meta name="description" content="${descriptionText}" />
+		<meta name="description" content="${meta_description}" />
+		${meta(
+			data,
+			`${data.metadata.username}’s Twitter Archive${titleTweetNumberStr}`,
+			tags,
+			imgUrlArgument
+		)}
 		<script>
 		if("classList" in document.documentElement) {
 			document.documentElement.classList.add("has-js");
