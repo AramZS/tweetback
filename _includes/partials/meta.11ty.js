@@ -38,7 +38,7 @@ module.exports = function (data, title, tagSet, imgUrls) {
 				isPartOf: {
 					"@type": ["ArchiveOrganization", "WebSite"],
 					name: `${data.metadata.username}’s Twitter Archive`,
-					productID: `${data.metadata.baseUrl}`,
+					url: `${data.metadata.baseUrl}`,
 				},
 			});
 			if (previewImage) {

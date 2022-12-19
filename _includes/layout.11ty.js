@@ -133,6 +133,7 @@ module.exports = async function (data) {
 <meta http-equiv="refresh" content="0; url=/${data.tweet.id_str}/">`
 				: ""
 		}
+		<script defer data-domain="tweets.aramzs.com" src="https://plausible.io/js/script.js"></script>
 	</head>
 	<body>
 		<header>
