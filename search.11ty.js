@@ -21,7 +21,7 @@ class Search {
 					<div class="tweets-search">
 						<div class="lo" style="--lo-margin-h: 1em; align-items: center;">
 							<div class="lo-c" style="flex-grow: 100">
-								<input type="text" id="tweet-text" required placeholder="Search Tweets" style="width: 100%">
+								<input type="text" id="tweet-text" required placeholder="Loading Tweets..." style="width: 100%" />
 							</div>
 							<div class="lo-c" style="flex-grow: .001;">
 								<button type="submit" disabled id="search-submit-button">Search</button>
