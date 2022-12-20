@@ -264,7 +264,7 @@ class Twitter {
 					let { targetUrl, className, displayUrl } =
 						this.getUrlObject(url);
 					targetUrl = twitterLink(targetUrl);
-					let displayUrlHtml = `<a href="${targetUrl}" class="${className}">${displayUrl}</a>`;
+					let displayUrlHtml = `<a href="${targetUrl}" class="${className}" data-pagefind-index-attrs="href">${displayUrl}</a>`;
 					text = text.replace(url.url, displayUrlHtml);
 
 					if (
@@ -401,7 +401,7 @@ class Twitter {
 			parseInt(tweet.retweet_count, 10) +
 			(tweet.quote_count ? tweet.quote_count : 0);
 
-		return `<li id="${tweet.id_str}" class="tweet${
+		return `<li id="${tweet.id_str}" class="tweet h-entry${
 			options.class ? ` ${options.class}` : ""
 		}${
 			this.isReply(tweet) &&
@@ -410,7 +410,7 @@ class Twitter {
 				: ""
 		}${this.isRetweet(tweet) ? " is_retweet" : ""}${
 			this.isMention(tweet) ? " is_mention" : ""
-		}">
+		}" data-pagefind-index-attrs="id">
 		${
 			this.isReply(tweet)
 				? `<a href="${
@@ -419,21 +419,26 @@ class Twitter {
 									`https://twitter.com/${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`
 							  )
 							: `/${tweet.in_reply_to_status_id_str}/`
-				  }" class="tweet-pretext">…in reply to @${
+				  }" class="tweet-pretext u-in-reply-to">…in reply to @${
 						tweet.in_reply_to_screen_name
 				  }</a>`
 				: ""
 		}
-			<div class="tweet-text">${await this.renderFullText(tweet, options)}</div>
+			<div class="tweet-text e-content">${await this.renderFullText(
+				tweet,
+				options
+			)}</div>
 			<span class="tweet-metadata">
 				${
 					!options.hidePermalink
 						? `<a href="/${tweet.id_str}/" class="tag tag-naked">Permalink</a>`
 						: ""
 				}
-				<a href="${twitterLink(
-					`https://twitter.com/${metadata.username}/status/${tweet.id_str}`
-				)}" class="tag tag-naked"><span class="sr-only">On twitter.com </span>↗</a>
+				<a href="https://twitter.com/${metadata.username}/status/${
+			tweet.id_str
+		}" class="tag tag-icon u-url" data-pagefind-index-attrs="href"><span class="sr-only">On twitter.com </span><img src="${this.avatarUrl(
+			"https://twitter.com/"
+		)}" alt="Twitter logo" width="27" height="27"></a>
 				${
 					!this.isReply(tweet)
 						? this.isRetweet(tweet)
@@ -474,9 +479,9 @@ class Twitter {
 				}
 				${
 					tweet.date
-						? `<span class="tag tag-naked tag-lite">${this.renderDate(
+						? `<time class="tag tag-naked tag-lite dt-published" datetime="${tweet.date.toISOString()}">${this.renderDate(
 								tweet.date
-						  )}</span>`
+						  )}</time>`
 						: ""
 				}
 				${
@@ -570,8 +575,12 @@ class Twitter {
 			"next",
 			previousAndNextTweetOptions
 		);
-		return `<ol class="tweets tweets-thread">
-			${previousHtml ? `<ol class="tweets-replies">${previousHtml}</ol>` : ""}
+		return `<ol class="tweets tweets-thread h-feed hfeed" data-pagefind-body>
+			${
+				previousHtml
+					? `<ol class="tweets-replies h-feed hfeed">${previousHtml}</ol>`
+					: ""
+			}
 			${await this.renderTweet(tweet, tweetOptions)}
 			${nextHtml ? `<ol class="tweets-replies h-feed hfeed">${nextHtml}</ol>` : ""}
 		</ol>`;
