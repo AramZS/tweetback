@@ -233,7 +233,7 @@ class Twitter {
 						}" class="tweet-media" onerror="fallbackMedia(this)" loading="lazy" decoding="async">`;
 						medias.push(`<a href="${imgRef.url}">${imgHtml}</a>`);
 					} catch (e) {
-						console.log("Image request error", e.message);
+						console.log("PullTwitterMedia Image request error", e.message);
 						medias.push(
 							`<a href="${media.media_url_https}">${media.media_url_https}</a>`
 						);
@@ -313,7 +313,7 @@ class Twitter {
 						}" class="tweet-media" onerror="fallbackMedia(this)" loading="lazy" decoding="async">`;
 						medias.push(`<a href="${imgRef.url}">${imgHtml}</a>`);
 					} catch (e) {
-						console.log("Image request error", e.message);
+						console.log("RenderFullText Image request error", e.message);
 						medias.push(
 							`<a href="${media.media_url_https}">${media.media_url_https}</a>`
 						);

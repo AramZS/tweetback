@@ -9,7 +9,9 @@
 		"fetch-new-data": "node database/fetchFromApi.js",
 		"build": "npx @11ty/eleventy --quiet --incremental",
 		"start": "npx @11ty/eleventy --quiet --serve --incremental",
-		"start:heavy": "NODE_OPTIONS=--max-old-space-size=19296 npm run start"
+		"start:heavy": "NODE_OPTIONS=--max-old-space-size=7168 npx @11ty/eleventy --serve > buildlog2.txt",
+		"start:heavylog": "NODE_OPTIONS=--max-old-space-size=7168 DEBUG=* npx @11ty/eleventy --serve > buildlog2.txt",
+		"sizecheck": "du -sh _site"
 	},
 	"keywords": [],
 	"contributors": [
