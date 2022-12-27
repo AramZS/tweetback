@@ -1,17 +1,79 @@
 const dataSource = require("../../src/DataSource");
 const metadata = require("../../_data/metadata.js");
 
-module.exports = function (data, title, tagSet, imgUrls) {
+module.exports = function (data, title, description, tagSet, imgUrls) {
 	let jsonLDProperties = [];
-	let ogProperties = [
+	let imgUrlsForUse = imgUrls || [];
+	let makeMetaTag = function (metaObject) {
+		const { meta, content } = metaObject;
+		const propValue = metaObject[meta];
+		return `<meta ${meta}="${propValue}" content="${content}" />`;
+	};
+
+	let previewImage = false;
+
+	if (imgUrlsForUse && imgUrlsForUse.length && imgUrlsForUse.length > 1) {
+		previewImage = imgUrlsForUse.at(imgUrlsForUse.length - 1);
+	} else if (imgUrlsForUse.length === 1) {
+		previewImage = imgUrlsForUse[0];
+	}
+
+	let metaProperties = [
 		{
 			meta: "property",
 			property: "og:url",
-			content: `${data.metadata.baseUrl}/${data.page.url}`,
+			content: `${data.metadata.baseUrl}${data.page.url}`,
 		},
 		{ meta: "name", name: "author", content: `${data.metadata.username}` },
+		{ meta: "property", property: "og:title", content: `${title}` },
+		{
+			meta: "property",
+			property: "og:description",
+			content: `${description}`,
+		},
+		{
+			meta: "property",
+			property: "og:site_name",
+			content: `${data.metadata.username}’s Twitter Archive`,
+		},
+		{
+			meta: "property",
+			property: "og:locale",
+			content: data.metadata.language,
+		},
+		{
+			meta: "name",
+			name: "twitter:site",
+			content: data.metadata.username,
+		},
+		{
+			meta: "name",
+			name: "twitter:description",
+			content: description,
+		},
+		{
+			meta: "name",
+			name: "twitter:creator",
+			content: data.metadata.username,
+		},
+		{
+			meta: "name",
+			name: "twitter:title",
+			content: `${title}`,
+		},
 	];
-	let metaProperties = [];
+	if (previewImage) {
+		metaProperties.push({
+			meta: "name",
+			name: "twitter:image",
+			content: `${previewImage}`,
+		});
+		metaProperties.push({
+			meta: "property",
+			property: "og:image",
+			content: `${previewImage}`,
+		});
+	}
 
 	let id = { "@id": `${data.page.url}` };
 
@@ -19,11 +81,6 @@ module.exports = function (data, title, tagSet, imgUrls) {
 
 	switch (data.page.fileSlug) {
 		case "tweet-pages":
-			let previewImage = false;
-			if (imgUrls && imgUrls.length) {
-				previewImage = imgUrls.at(-1);
-			}
-
 			jsonLDProperties.push({
 				"@type": ["BlogPosting", "ArchiveComponent"],
 			});
@@ -31,9 +88,15 @@ module.exports = function (data, title, tagSet, imgUrls) {
 			jsonLDProperties.push({ identifier: `${data.tweet.id_str}` });
 			// jsonLDProperties.push({"headline": `${title}`})
 
-			jsonLDProperties.push({ itemLocation: `${data.page.url}` });
-			jsonLDProperties.push({ holdingArchive: `${data.page.url}` });
-			jsonLDProperties.push({ hasPart: `${data.metadata.baseUrl}` });
+			jsonLDProperties.push({
+				itemLocation: `${data.metadata.baseUrl}${data.page.url}`,
+			});
+			jsonLDProperties.push({
+				holdingArchive: `${data.metadata.baseUrl}`,
+			});
+			jsonLDProperties.push({
+				hasPart: `${data.metadata.baseUrl}${data.page.url}`,
+			});
 			jsonLDProperties.push({
 				isPartOf: {
 					"@type": ["ArchiveOrganization", "WebSite"],
@@ -54,14 +117,16 @@ module.exports = function (data, title, tagSet, imgUrls) {
 				"@type": ["ArchiveOrganization", "WebSite"],
 			});
 			jsonLDProperties.push({ archiveHeld: `${data.page.url}` });
-			jsonLDProperties.push({ url: `${data.page.url}` });
+			jsonLDProperties.push({
+				url: `${data.metadata.baseUrl}${data.page.url}`,
+			});
 			jsonLDProperties.push({
 				name: `${data.metadata.username}’s Twitter Archive`,
 			});
 	}
 
 	jsonLDProperties.push({
-		about: [data.metadata.username, data.metadata.name, ...tags],
+		about: [data.metadata.username, data.me.name, ...tags],
 	});
 	jsonLDProperties.push(id);
 	let jsonLD = {
@@ -78,7 +143,7 @@ module.exports = function (data, title, tagSet, imgUrls) {
 			},
 		},
 		inLanguage: data.metadata.language,
-		about: ["Twitter", data.metadata.username],
+		about: ["Twitter", `${data.metadata.username}`],
 	};
 	if (data.me.description) {
 		jsonLD.creator.description = data.me.description;
@@ -138,10 +203,18 @@ module.exports = function (data, title, tagSet, imgUrls) {
 		},
 	};
 
-	const jsonString = JSON.stringify(jsonLDFinal);
+	const jsonString = JSON.stringify(jsonLDFinal, null, 1);
+	let metaStrings = "";
+	metaProperties.forEach((prop) => {
+		metaStrings += `
+	${makeMetaTag(prop)}
+		`;
+	});
 
-	return `<script type="application/ld+json">
-    ${jsonString}
+	return `<!-- ${JSON.stringify(imgUrls)} -->
+<script type="application/ld+json">
+   	${jsonString}
 </script>
+${metaStrings}
 `;
 };

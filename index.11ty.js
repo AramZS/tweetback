@@ -330,8 +330,7 @@ class Index extends Twitter {
 				tweetCount
 			)}</span> tweet${tweetCount !== 1 ? "s" : ""}
 		</h2>
-		<a href="/twitter-search"><h2>Search tweet text</h2></a>
-		<hr />
+		<!-- <a href="/twitter-search"><h2>Search tweet text</h2></a><hr /> -->
 		<div class="js">
 			<h2>Search Tweets:</h2>
 			<div class="tweets-search">

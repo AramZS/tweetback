@@ -4,7 +4,7 @@ const meta = require("./partials/meta.11ty");
 const twitter = require("../src/twitter");
 
 module.exports = async function (data) {
-	const twitterTools = new twitter();
+	// const twitterTools = new twitter();
 	let titleTweetNumberStr = "";
 	if (data.page.fileSlug === "tweet-pages") {
 		titleTweetNumberStr = `—№ ${this.renderNumber(
@@ -82,7 +82,7 @@ module.exports = async function (data) {
 			: ""
 	} ${data.metadata.username}’s tweets.`;
 	let tags = {};
-	let imgUrlArgument = false;
+	let imgUrlArgument = [];
 	if (
 		data.page.fileSlug === "tweet-pages" &&
 		data.tweet &&
@@ -105,6 +105,7 @@ module.exports = async function (data) {
 		${meta(
 			data,
 			`${data.metadata.username}’s Twitter Archive${titleTweetNumberStr}`,
+			meta_description,
 			tags,
 			imgUrlArgument
 		)}
@@ -155,6 +156,9 @@ module.exports = async function (data) {
 		</header>
 		<main>
 			${data.content}
+			<br />
+			<hr /> 
+			<a href="/twitter-search"><h2>Search tweets' text</h2></a>
 		</main>
 		<footer>
 			<p>An open source project from <a href="https://github.com/tweetback">tweetback</a>.</p>

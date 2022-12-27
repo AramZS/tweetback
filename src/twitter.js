@@ -180,7 +180,7 @@ class Twitter {
 		};
 	}
 
-	async pullTwitterMedia(tweet) {
+	async pullTwitterMedia(tweet, text) {
 		let medias = [];
 		let imgUrls = [];
 		// linkify urls
@@ -213,8 +213,10 @@ class Twitter {
 		if (tweet.extended_entities) {
 			for (let media of tweet.extended_entities.media) {
 				if (media.type === "photo") {
-					// remove photo URL
-					text = text.replace(media.url, "");
+					if (text) {
+						// remove photo URL
+						text = text.replace(media.url, "");
+					}
 
 					let imgHtml = "";
 					// TODO the await use here on eleventyImg could be improved
