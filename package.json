@@ -10,7 +10,8 @@
 		"build": "npx @11ty/eleventy --quiet --incremental",
 		"build:heavy": "npx @11ty/eleventy --incremental",
 		"start": "npx @11ty/eleventy --quiet --serve --incremental",
-		"start:heavy": "NODE_OPTIONS=--max-old-space-size=12288 npm run start",
+		"start:heavy": "NODE_OPTIONS=--max-old-space-size=12288 npx @11ty/eleventy --serve > buildlog2.txt",
+		"start:heavylog": "NODE_OPTIONS=--max-old-space-size=7168 DEBUG=* npx @11ty/eleventy --serve > buildlog2.txt",
 		"sizecheck": "du -sh _site"
 	},
 	"keywords": [],
