@@ -77,9 +77,9 @@ function getSearchResults(searchString, keepHistoryState) {
 				location.protocol + "//" + location.host + location.pathname;
 			const searchParams = createUrlSearchParams(searchString);
 			window.history.pushState(
-				{ path: `${baseURL}/?${searchParams.toString()}` },
+				{ path: `${baseURL}?${searchParams.toString()}` },
 				"",
-				`${baseURL}/?${searchParams.toString()}`
+				`${baseURL}?${searchParams.toString()}`
 			);
 		}
 	}
